@@ -1,94 +1,143 @@
 <template>
   <div id="app">
     <h1>{{ msg }}</h1>
-    <!--
-    <button v-on:click="counter += 1">connection manager</button>
-    <p>The button above has been clicked {{ counter }} times.</p>
-    -->
     <hr />
     <div class="card">
       <h2>Log</h2>
-      <label>Log Level</label>
+      <h4>Log Level</h4>
       <input type="text" :value="log.level" />
       <br />
-      <label>Log Path</label>
+      <h4>Log Path</h4>
       <input type="text" :value="log.path" />
     </div>
     <div class="card">
       <h2>Admin</h2>
-      <label>IP</label>
+      <h4>IP</h4>
       <input type="text" :value="admin.ip" />
       <br />
-      <label>Port</label>
+      <h4>Port</h4>
       <input type="text" :value="admin.port" />
     </div>
     <div class="card">
       <h2>Tracing</h2>
-      <label>Enable</label>
+      <h4>Enable</h4>
       <input type="text" :value="tracing.enable" />
       <br />
-      <label>Driver</label>
+      <h4>Driver</h4>
       <input type="text" :value="tracing.driver" />
     </div>
     <div class="card">
       <h2>PProf</h2>
-      <label>Enable</label>
+      <h4>Enable</h4>
       <input type="text" :value="pprof.debug" />
       <br />
-      <label>Port</label>
+      <h4>Port</h4>
       <input type="text" :value="pprof.port_value" />
     </div>
     <hr />
+
     <h2>stream direction : listener -> router -> cluster</h2>
-    <div style="width:100%">
-      <div class="card_wide">
-        <h2>Cluster</h2>
-        <label>name</label>
-        <input type="text" :value="current_cluster.name" />
-        <label>type</label>
-        <input type="text" :value="current_cluster.type" />
-        <label>lb_type</label>
-        <input type="text" :value="current_cluster.lb_type" />
-        <br />
-        <label>max_request_per_conn</label>
-        <input type="text" :value="current_cluster.max_request_per_conn" />
-        <label>conn_buffer_limit_bytes</label>
-        <input type="text" :value="current_cluster.conn_buffer_limit_bytes" />
-        <br />
-        <label>address list:</label>
-        <br />
-        <input
-          class="addr_box"
-          type="text"
-          v-for="item in current_cluster.hosts"
-          :key="item.address"
-          :value="item.address"
-        />
-        <a v-on:click="add_addr_to_cluster"> add </a>
-      </div>
-      <div class="card_wide">
-        <h2>Router</h2>
-        <label>name</label>
-        <input type="text" :value="current_router.router_config_name" />
-        <br />
-        <a> add </a>
-      </div>
-      <div class="card_wide">
-        <h2>Listener</h2>
-        <label>name</label>
-        <input type="text" :value="current_listener.name" /> <br/>
-        <div v-for="chain in current_listener.filter_chains" :key="chain.index">
-          <div v-for="filter in chain.filter" :key="filter.index">
-            <label>filter_type</label><input type="text" :value="filter.type"/> <br/>
-            <label>downstream_protocol</label><input type="text" :value="filter.config.downstream_protocol"/> <br/>
-            <label>upstream_protocol</label><input type="text" :value="filter.config.upstream_protocol"/> <br/>
-            <label>router name</label><input type="text" :value="filter.config.router_config_name"/> <br/>
+
+    <!-- cluster start -->
+    <div class="card_wide">
+      <h2>Cluster</h2>
+      <table>
+        <tr>
+          <td>
+            <h4>name</h4>
+            <input type="text" :value="current_cluster.name" />
+          </td>
+          <td>
+            <h4>type</h4>
+            <input type="text" :value="current_cluster.type" />
+          </td>
+          <td>
+            <h4>lb_type</h4>
+            <input type="text" :value="current_cluster.lb_type" />
+          </td>
+          <td>
+            <h4>max_request_per_conn</h4>
+            <input type="text" :value="current_cluster.max_request_per_conn" />
+          </td>
+          <td>
+            <h4>conn_buffer_limit_bytes</h4>
+            <input type="text" :value="current_cluster.conn_buffer_limit_bytes" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <h4>address list:</h4>
+            <input
+              class="addr_box"
+              type="text"
+              v-for="item in current_cluster.hosts"
+              :key="item.address"
+              :value="item.address"
+            />
+            <a v-on:click="add_addr_to_cluster">add</a>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <!-- cluster end -->
+
+    <!-- router start -->
+    <div class="card_wide">
+      <h2>Router</h2>
+      <h4>name</h4>
+      <input type="text" :value="current_router.router_config_name" />
+      <a>add</a>
+    </div>
+    <!-- router end -->
+
+    <!-- listener start -->
+    <div class="card_wide">
+      <h2>Listener</h2>
+      <table>
+        <tr>
+          <td>
+            <h4>name</h4>
+            <input type="text" :value="current_listener.name" />
+          </td>
+          <td>
+            <h4>address</h4>
+            <input type="text" :value="current_listener.address" />
+          </td>
+          <td>
+            <h4>bind port</h4>
+            <input type="text" :value="current_listener.bind_port" />
+          </td>
+        </tr>
+      </table>
+      <table>
+        <h3>filter chains</h3>
+        <tr v-for="(chain, index) in current_listener.filter_chains" :key="index">
+          <h4>filter chain id: {{index}}</h4>
+          <div v-for="filter in chain.filter" :key="filter.index" style="border:1px solid gray">
+            <td>
+            <h4>filter_type</h4>
+            <input type="text" :value="filter.type" />
+            </td>
+            <td>
+            <h4>downstream_protocol</h4>
+            <input type="text" :value="filter.config.downstream_protocol" />
+            </td>
+            <td>
+            <h4>upstream_protocol</h4>
+            <input type="text" :value="filter.config.upstream_protocol" />
+            </td>
+            <td>
+            <h4>router name</h4>
+            <input type="text" :value="filter.config.router_config_name" />
+            </td>
           </div>
-        </div>
-        <a> add </a>
-      </div>
+        </tr>
+        <a>add</a>
+      </table>
     </div>
     <hr />
+    <!-- listener end -->
+
     <button v-on:click="generate_json">Generate JSON</button>
     <hr />
     <div>
@@ -122,23 +171,23 @@ export default {
         port_value: 34092
       },
       current_listener: {
-        name : "serverListener",
-        address : "127.0.0.1:2045",
-        bind_port : true,
-        filter_chains : [
+        name: "serverListener",
+        address: "127.0.0.1:2045",
+        bind_port: true,
+        filter_chains: [
           {
-            filter : [
+            filter: [
               {
-                type : "proxy",
-                config : {
+                type: "proxy",
+                config: {
                   downstream_protocol: "Http1",
-									upstream_protocol: "Http1",
-									router_config_name:"serverRouter"
+                  upstream_protocol: "Http1",
+                  router_config_name: "serverRouter"
                 }
-              },
+              }
             ]
-          },
-        ],
+          }
+        ]
       },
       current_router: {
         router_config_name: "serverRouter",
@@ -155,25 +204,22 @@ export default {
     };
   },
   methods: {
-    add_addr_to_cluster : function(event) {
-      this.current_cluster.hosts.push({address : "127.0.0.1:8080"})
-    },
-    confirm_log: function(event) {
-      alert(this.log.path);
+    add_addr_to_cluster: function(event) {
+      this.current_cluster.hosts.push({ address: "127.0.0.1:8080" });
     },
     show_window: function(event) {
       alert(event.target.name);
     },
     generate_json: function(event) {
       var x = {
-        log : this.log,
-        admin : this.admin,
-        tracing : this.tracing,
-        pprof : this.pprof,
-        listeners : this.current_cluster,
-        cluster : this.current_cluster,
-        router : this.current_router,
-      }
+        log: this.log,
+        admin: this.admin,
+        tracing: this.tracing,
+        pprof: this.pprof,
+        listeners: this.current_cluster,
+        cluster: this.current_cluster,
+        router: this.current_router
+      };
       this.json_data = JSON.stringify(x);
     }
   }
@@ -181,6 +227,14 @@ export default {
 </script>
 
 <style>
+td {
+  padding: 10px;
+}
+
+h4 {
+  font-size: 20px;
+}
+
 .addr_box {
   display: block;
 }
@@ -199,8 +253,11 @@ export default {
 
 .card_wide {
   width: 100%;
-  height: 200px;
+  height: auto;
   display: inline-block;
+  border: 1px solid gray;
+  margin-top: 20px;
+  padding: 10px;
 }
 
 .card {
@@ -222,13 +279,14 @@ button {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 10px;
+  padding: 20px;
 }
 
 h1,
 h2 {
   font-weight: normal;
-  text-align:center;
+  text-align: center;
 }
 
 ul {
