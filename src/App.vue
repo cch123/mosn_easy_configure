@@ -7,36 +7,46 @@
     -->
     <hr/>
     <div class="card">
-      <h2>Log Configuration</h2>
-      <button v-on:click="show_window" name="routes">log settings</button>
+      <h2>Log</h2>
+      <button v-on:click="show_window" name="log">confirm</button>
+      <label>Log Level</label> <input type="text" :value = "log.level" /> <br/>
+      <label>Log Path</label> <input type="text" :value = "log.path"/>
     </div>
     <div class="card">
-      <h2>Listener Configuration</h2>
-      <button v-on:click="show_window" name="routes">listener settings</button>
-    </div>
-    <div class="card">
-      <h2>Admin Configuration</h2>
-      <button v-on:click="show_window" name="routes">admin settings</button>
-    </div>
-    <div class="card">
-      <h2>Cluster Configuration</h2>
-      <button v-on:click="show_window" name="routes">add cluster rule</button>
-    </div>
-    <div class="card">
-      <h2>Route Configuration</h2>
-      <button v-on:click="show_window" name="routes">add route rule</button>
-    </div>
-    <div class="card">
-      <h2>Conn Configuration</h2>
-      <button v-on:click="show_window" name="routes">add route rule</button>
+      <h2>Admin</h2>
+      <button v-on:click="show_window" name="admin">confirm</button>
+      <label>IP</label> <input type="text" :value = "admin.ip" /> <br/>
+      <label>Port</label> <input type="text" :value = "admin.port"/>
     </div>
     <div class="card">
       <h2>Tracing</h2>
-      <button v-on:click="show_window" name="tracing">tracing configure</button>
+      <button v-on:click="show_window" name="tracing">settings</button>
+      <label>Enable</label> <input type="text" :value = "tracing.enable" /> <br/>
+      <label>Driver</label> <input type="text" :value = "tracing.driver"/>
     </div>
     <div class="card">
       <h2>PProf</h2>
-      <button v-on:click="show_window" name="pprof">pprof</button>
+      <button v-on:click="show_window" name="pprof">settings</button>
+      <label>Enable</label> <input type="text" :value = "pprof.debug" /> <br/>
+      <label>Port</label> <input type="text" :value = "pprof.port_value"/>
+    </div>
+    <h2> stream direction : listener -> router -> cluster</h2>
+    <div class="card">
+      <h2>Listener</h2>
+      <button v-on:click="show_window" name="listener">settings</button>
+      <ul></ul>
+    </div>
+    <div class="card">
+      <h2>Route</h2>
+      <button v-on:click="show_window" name="route">settings</button>
+      <ul>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Cluster</h2>
+      <button v-on:click="show_window" name="cluster">settings</button>
+      <ul>
+      </ul>
     </div>
     <hr/>
     <button v-on:click="generate_json">Generate JSON</button>
@@ -55,11 +65,29 @@ export default {
     return {
       msg: 'MOSN configuration generator',
       counter : 0,
-      config : {"x" : 0},
-      json_data : ""
+      config : {},
+      json_data : "",
+      log : {
+        level : "INFO",
+        path : "/tmp/test.log"
+      },
+      admin : {
+        ip : "0.0.0.0",
+        port : 12345
+      },
+      tracing : {
+        enable : true,
+        driver: "SOFATracer" 
+      },
+      pprof : {
+        debug : true,
+        port_value : 34092
+      },
     }
   },
   methods : {
+    confirm_log : function(event) {
+    },
     show_window : function(event) {
       alert(event.target.name);
       if (isNaN(this.config[event.target.name]) == true) {
@@ -90,6 +118,7 @@ export default {
 }
 
 .card {
+  height: 160px;
   padding: 10px;
   text-align: left;
   width: 22%;
